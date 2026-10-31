@@ -145,9 +145,8 @@ export default function PrivacyPolicyPage() {
           </p>
         </section>
         <p className="legal-page__notice">
-          This page is a general website policy draft, not legal advice. Before publication,
-          confirm the legal name and contact details of the responsible entity, actual hosting
-          and analytics tools, cookie use, data retention practices and applicable legal requirements.
+          In case you feel something is missing or needs updated or you just need a clarification, don't hesitate to contact us. Our contact details are 
+          available on our contact page.
         </p>
       </div>
     </article>

@@ -143,9 +143,8 @@ export default function TermsPage() {
           </p>
         </section>
         <p className="legal-page__notice">
-          This is a general website-terms draft, not legal advice. Have it reviewed before
-          publication, particularly the legal entity, governing law, liability provisions,
-          and any terms needed for your actual services or transactions.
+          In case you feel something is missing or needs updated or you just need a clarification, don't hesitate to contact us. Our contact details are 
+          available on our contact page.
         </p>
       </div>
     </article>
