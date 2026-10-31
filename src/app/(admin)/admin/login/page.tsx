@@ -5,7 +5,17 @@ import { signInAction } from '../actions/auth';
 
 export const metadata = { title: 'CMS Login | Kurarin Solutions' };
 
-export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+import { Suspense } from 'react';
+
+export default function AdminLoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  return (
+    <Suspense fallback={<main className="cms-login-shell"><section className="cms-login-card" aria-label="Loading sign-in"><p className="cms-kicker">CONTENT MANAGEMENT</p><p className="cms-muted">Loading sign-in…</p></section></main>}>
+      <AdminLoginContent searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function AdminLoginContent({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (user) redirect('/admin');

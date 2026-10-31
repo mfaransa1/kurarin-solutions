@@ -1,0 +1,91 @@
+/* Kurarin universal visual system — aligns legacy public pages with core-pages-refresh.
+   Import this AFTER site.css, pages.css, content-pages.css and blog.css. */
+:root {
+  --kurarin-orange: #ff1744;
+  --kurarin-orange-dark: #e60035;
+  --kurarin-black: #111111;
+  --kurarin-cream: #fffdf8;
+  --kurarin-white: #ffffff;
+  --kurarin-gray: #666666;
+  --kurarin-border: #e5e5e5;
+  --kcr-accent: #ff1744;
+}
+html { font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; }
+body { font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; color:#111; }
+::selection { background:#ff1744; color:#fff; }
+
+/* Shared navigation and footer: compact, neutral, square-edged editorial look */
+.site-header { background:rgb(255 253 248 / 94%); border-bottom-color:#e5e5e5; }
+.site-header__nav-link.is-active::after, .eyebrow > span { background:#ff1744; }
+.button { border-radius:4px; }
+.button--primary { background:#080808; border-color:#080808; color:#fff; }
+.button--primary:hover { background:#242424; border-color:#242424; }
+.button--secondary { border-radius:4px; background:#fff; border-color:#e5e5e5; }
+.button--secondary:hover { border-color:#aaa; }
+.site-footer { background:#f7f7f5; }
+.site-footer__email, .text-link, .site-footer__links a:hover { color:#222; }
+.site-footer__links a:hover { text-decoration:underline; text-underline-offset:3px; }
+
+/* Remove the old orange/cream treatment from legacy About and Services pages */
+.page-intro { background:#fffdf8; }
+.page-intro::before { border-color:rgb(255 23 68 / 10%); box-shadow:0 0 0 40px rgb(255 23 68 / 2%),0 0 0 80px rgb(255 23 68 / 1%); }
+.page-intro__title span, .about-story__monogram span { color:#ff1744; }
+.page-intro__description, .about-story__content>p, .principle-card p,
+.service-card__summary, .process-step p, .service-detail__focus>p:not(.eyebrow),
+.service-related__card p { color:#555; }
+.about-cta__inner { border-radius:5px; background:#f7f7f5; }
+.about-cta__inner h2 span, .services-cta__panel h2 span { color:#ff1744; }
+.principle-card { border-top-color:#d5d5d5; }
+.services-directory__grid .service-card, .service-related__card,
+.service-detail__focus { border-radius:5px; background:#fff; border-color:#e5e5e5; }
+.service-card:hover, .service-related__card:hover { border-color:#bcbcbc; box-shadow:0 14px 38px rgb(0 0 0 / 4%); }
+.service-card__symbol, .process-step__number, .service-detail__focus-symbol {
+  border-radius:5px; background:#fff0f3; color:#e60035;
+}
+.service-card__link, .service-related__arrow, .breadcrumbs a:hover { color:#e60035; }
+.service-card__outcome { border-left-color:#ff1744; }
+.services-cta__panel { border-radius:5px; }
+.breadcrumbs { color:#777; }
+
+/* Team, FAQ and contact: consistent with the refreshed homepage typography */
+.team-page, .faq-page, .contact-page { background:#fffdf8; }
+.team-placeholder-grid { gap:1rem; }
+.team-placeholder, .contact-form-panel { border-radius:5px; background:#fff; border-color:#e5e5e5; }
+.team-placeholder__portrait { border-radius:4px; background:linear-gradient(135deg,#f5f5f3,#ececea); color:#c8c8c5; }
+.team-placeholder__portrait span { color:#ff1744; }
+.team-placeholder .eyebrow { font-size:.7rem; }
+.team-placeholder h3 { font-size:1.25rem; letter-spacing:-.03em; font-weight:700; }
+.team-placeholder__role { color:#222 !important; font-size:.92rem !important; font-weight:650; }
+.team-placeholder p:last-child { color:#555; font-size:.95rem; line-height:1.75; }
+.team-page__cta h2 { letter-spacing:-.04em; }
+.faq-item__toggle::before, .faq-item__toggle::after { background:#ff1744; }
+.contact-detail__icon { border-radius:5px; background:#f7f7f5; color:#222; }
+.contact-detail a:hover { color:#e60035; }
+.contact-form-panel { box-shadow:0 12px 40px rgb(0 0 0 / 3%); }
+.contact-form input, .contact-form select, .contact-form textarea {
+  border-radius:4px; border-color:#dedede; background:#fff;
+}
+.contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+  border-color:#ff1744; box-shadow:0 0 0 3px rgb(255 23 68 / 10%);
+}
+.contact-form label > span:not(.contact-form__optional) { color:#e60035; }
+
+/* Blog pages: neutral surfaces, crisp headings and restrained red detail */
+.blog-page, .blog-post, .blog-archive { color:#111; }
+.blog-card, .blog-post__panel, .blog-search, .blog-category,
+.blog-article-card { border-radius:5px; }
+.blog-card a:hover, .blog-post a:hover { color:#e60035; }
+.blog-card__category, .blog-post__category, .blog-category.is-active {
+  color:#e60035; background:#fff0f3; border-color:#ffd4dd;
+}
+
+/* Prevent inherited rounded pills and old accent colors on common content links */
+a, button, input, textarea, select { -webkit-tap-highlight-color:transparent; }
+:focus-visible { outline-color:#ff1744; }
+@media(max-width:600px) {
+  .team-page__cta { gap:1.25rem; }
+  .contact-form-panel { padding:1.25rem; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .site-header *, .service-card, .service-related__card { transition:none !important; }
+}

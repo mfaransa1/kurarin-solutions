@@ -5,6 +5,9 @@ import "./site.css";
 import "./pages.css";
 import "./content-pages.css";
 import "./blog.css";
+/* Keep the footer styles last so they override older shared footer rules. */
+import "./footer-redesign.css";
+import "./legal-pages.css";
 
 export const metadata: Metadata = {
   title: {

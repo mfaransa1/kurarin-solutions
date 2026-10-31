@@ -1,113 +1,32 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
-import { ButtonLink } from "@/components/ui/ButtonLink";
-import { PageIntro } from "@/components/marketing/PageIntro";
-import { services, getServiceBySlug } from "@/config/services";
+import { siteContent } from "@/content/site-content";
+import "../services-refresh.css";
 
-type ServiceDetailPageProps = {
-  params: Promise<{ slug: string }>;
+type Props = { params: Promise<{ slug: string }> };
+const details: Record<string, { intro: string; fit: string; outcomes: string[]; stages: [string,string,string][] }> = {
+  "software-development": { intro: "We design and build digital systems around your workflows, users and goals—not the other way around.", fit: "For teams that need a new platform, want to replace fragmented tools, or have outgrown off-the-shelf software.", outcomes: ["Web applications and customer portals", "Business, management and administration systems", "APIs, databases and third-party integrations", "Testing, maintenance and iterative improvements"], stages: [["01","Discover","Understand users, workflows, requirements and constraints."],["02","Design the system","Shape the experience, data model and technical approach."],["03","Develop and validate","Build in reviewable increments and test the important flows."],["04","Launch and support","Prepare deployment, documentation and next-step improvements."]] },
+  "business-automation": { intro: "We connect repetitive tasks, tools and information into clearer workflows that help teams spend less time on manual work.", fit: "For organizations dealing with repeated data entry, disconnected systems, avoidable handoffs or processes that are hard to track.", outcomes: ["Workflow mapping and process improvement", "Internal tools and operational dashboards", "Data processing and routine task automation", "System integrations and notifications"], stages: [["01","Map the workflow","Identify friction, repeat work, handoffs and failure points."],["02","Prioritize opportunities","Choose improvements that are useful and realistic."],["03","Connect and automate","Build the workflow with appropriate checks and visibility."],["04","Review the results","Test with users and refine the process as needs evolve."]] },
+  "cloud-infrastructure": { intro: "We help establish and improve the technical foundations behind your applications, data and digital services.", fit: "For teams preparing to launch, improving deployment practices, or looking for a more maintainable and observable setup.", outcomes: ["Cloud environment planning and deployment", "Application hosting and database setup", "Configuration, backups and access considerations", "Monitoring, reliability and maintenance planning"], stages: [["01","Assess the current setup","Review requirements, environments and operational constraints."],["02","Plan the foundation","Choose an appropriate architecture and deployment path."],["03","Configure and validate","Set up environments and verify key operating needs."],["04","Monitor and maintain","Document the setup and plan ongoing care and improvements."]] },
+  "digital-products": { intro: "We help shape ideas into digital products with a clear purpose, a considered user experience and a practical path to launch.", fit: "For founders and organizations validating an idea, developing an MVP, or improving an existing digital experience.", outcomes: ["Product discovery and feature prioritization", "User journeys, wireframes and interface design", "Prototypes and minimum viable products", "Usability review, testing and iteration"], stages: [["01","Explore the idea","Clarify the audience, problem and value the product should provide."],["02","Shape the experience","Prioritize features and map the core user journeys."],["03","Prototype and build","Turn the agreed direction into a usable product increment."],["04","Learn and refine","Use feedback and observed needs to guide improvements."]] },
 };
 
-export function generateStaticParams() {
-  return services.map((service) => ({ slug: service.slug }));
-}
+export function generateStaticParams() { return siteContent.services.map(service => ({ slug: service.slug })); }
+export async function generateMetadata({ params }: Props): Promise<Metadata> { const { slug } = await params; const service = siteContent.services.find(item => item.slug === slug); if (!service) return { title: "Service not found | Kurarin Solutions" }; return { title: `${service.title} | Kurarin Solutions`, description: service.description, alternates: { canonical: `/services/${service.slug}/` } }; }
 
-export async function generateMetadata({ params }: ServiceDetailPageProps): Promise<Metadata> {
+export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
-  const service = getServiceBySlug(slug);
-
-  if (!service) return { title: "Service not found" };
-
-  return {
-    title: service.title,
-    description: service.summary,
-    alternates: { canonical: `/services/${service.slug}/` },
-  };
-}
-
-export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
-  const { slug } = await params;
-  const service = getServiceBySlug(slug);
-
+  const service = siteContent.services.find(item => item.slug === slug);
   if (!service) notFound();
-
-  const otherServices = services.filter((item) => item.slug !== service.slug).slice(0, 3);
-
-  return (
-    <>
-      <PageIntro
-        eyebrow={`Service ${service.number}`}
-        title={service.title}
-        accent="with purpose."
-        description={service.summary}
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Services", href: "/services/" },
-          { label: service.title },
-        ]}
-      />
-
-      <Section className="service-detail">
-        <Container>
-          <div className="service-detail__grid">
-            <div>
-              <p className="eyebrow"><span /> What this can help with</p>
-              <h2 className="section-title">A clear approach to<br /><span>the right outcome.</span></h2>
-              <p className="section-copy">{service.summary}</p>
-              <p className="section-copy">
-                We begin by understanding the context, users, constraints, and
-                priorities. The scope and delivery plan should fit the actual
-                problem rather than force every project into the same template.
-              </p>
-            </div>
-            <aside className="service-detail__focus">
-              <span className="service-detail__focus-symbol" aria-hidden="true">{service.symbol}</span>
-              <p className="eyebrow">Areas of focus</p>
-              <h2>{service.title}</h2>
-              <p>{service.outcome}</p>
-              <Link className="text-link" href="/contact/">Discuss your requirements <span aria-hidden="true">↗</span></Link>
-            </aside>
-          </div>
-        </Container>
-      </Section>
-
-      <Section className="service-related">
-        <Container>
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow"><span /> Related capabilities</p>
-              <h2 className="section-title">More ways to<br /><span>move forward.</span></h2>
-            </div>
-            <Link className="text-link" href="/services/">All services <span aria-hidden="true">↗</span></Link>
-          </div>
-          <div className="service-related__grid">
-            {otherServices.map((item) => (
-              <Link className="service-related__card" href={`/services/${item.slug}/`} key={item.slug}>
-                <span>{item.number} / {item.symbol}</span>
-                <h3>{item.title}</h3>
-                <p>{item.summary}</p>
-                <span className="service-related__arrow" aria-hidden="true">↗</span>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      <Section className="services-cta">
-        <Container>
-          <div className="services-cta__panel">
-            <div>
-              <p className="eyebrow"><span /> Next step</p>
-              <h2>Let&apos;s talk about<br /><span>what you need.</span></h2>
-              <p>We can start with your goals and identify a practical way forward.</p>
-            </div>
-            <ButtonLink href="/contact/">Contact Kurarin <span aria-hidden="true">↗</span></ButtonLink>
-          </div>
-        </Container>
-      </Section>
-    </>
-  );
+  const content = details[slug];
+  const others = siteContent.services.filter(item => item.slug !== slug);
+  return <main className={`ks-services ks-service-detail-page ks-service-detail-page--${slug}`}>
+    <section className="ks-detail-hero"><div className="ks-detail-hero__copy"><p className="ks-eyebrow"><Link href="/services/">Services</Link> / {service.title}</p><h1>{service.title}<span>.</span></h1><p className="ks-lead">{content?.intro ?? service.description}</p><div className="ks-actions"><Link className="ks-button ks-button--dark" href="/contact/">Discuss your project <span>↗</span></Link><Link className="ks-button ks-button--light" href="/services/">All services <span>↗</span></Link></div><p className="ks-location-note">Thoughtful planning · Practical delivery · Continuous improvement</p></div><div className="ks-detail-art" aria-hidden="true"><div className="ks-detail-art__ring ks-detail-art__ring--outer"/><div className="ks-detail-art__ring ks-detail-art__ring--inner"/><div className="ks-detail-art__tile ks-detail-art__tile--one">{slug === "business-automation" ? "FLOW" : slug === "cloud-infrastructure" ? "CLOUD" : slug === "digital-products" ? "IDEA" : "CODE"}</div><div className="ks-detail-art__tile ks-detail-art__tile--two">{slug === "business-automation" ? "TASK" : slug === "cloud-infrastructure" ? "DATA" : slug === "digital-products" ? "DESIGN" : "BUILD"}</div><div className="ks-detail-art__pulse"/><span className="ks-detail-art__caption">KURARIN / {slug.replaceAll("-", " ").toUpperCase()}</span></div></section>
+    <section className="ks-detail-intro"><div><p className="ks-eyebrow">A good fit for</p><h2>Start with the problem.<br/>Build toward the outcome.</h2></div><p>{content?.fit ?? service.description} We work with you to establish a sensible scope, agree on priorities and select an approach that fits your context.</p></section>
+    <section className="ks-detail-capabilities"><div className="ks-section-heading"><p className="ks-eyebrow">What we can help with</p><h2>Capabilities shaped around your needs.</h2></div><div className="ks-detail-capability-grid">{(content?.outcomes ?? service.capabilities).map((item,index)=><article key={item}><span>{String(index+1).padStart(2,"0")}</span><h3>{item}</h3><b aria-hidden="true">↗</b></article>)}</div></section>
+    <section className="ks-detail-process"><div className="ks-section-heading"><p className="ks-eyebrow">How we work</p><h2>Clear steps. Shared understanding.</h2><p>We keep communication open and make key decisions visible throughout the project.</p></div><div className="ks-detail-process-grid">{(content?.stages ?? []).map(([n,t,d])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}</div></section>
+    <section className="ks-related"><div className="ks-section-heading"><p className="ks-eyebrow">Explore further</p><h2>Connected capabilities.</h2></div><div className="ks-related-grid">{others.map((item,index)=><Link href={`/services/${item.slug}/`} key={item.slug}><span>0{index+1}</span><h3>{item.title}</h3><p>{item.description}</p><b>Explore service ↗</b></Link>)}</div></section>
+    <section className="ks-services-cta"><div><p className="ks-eyebrow">Ready to talk?</p><h2>Let’s find the right approach.</h2><p>Share your goals and challenges. We’ll help you identify a practical next step.</p></div><Link className="ks-button ks-button--white" href="/contact/">Start a conversation <span>↗</span></Link></section>
+  </main>;
 }

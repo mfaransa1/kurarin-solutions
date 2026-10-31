@@ -2,116 +2,161 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { SiteLogo } from "@/components/layout/SiteLogo";
+import { useEffect, useRef, useState } from "react";
+import "./header-redesign.css";
 
-const navigation = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about/" },
-  { label: "Services", href: "/services/" },
-  { label: "Our Team", href: "/our-team/" },
-  { label: "Insights", href: "/blog/" },
-  { label: "FAQs", href: "/faqs/" },
+type NavItem = { label: string; href: string };
+type NavGroup = { label: string; items: NavItem[] };
+
+const groups: NavGroup[] = [
+  {
+    label: "Services",
+    items: [
+      { label: "All services", href: "/services/" },
+      { label: "Software Development", href: "/services/software-development/" },
+      { label: "Business Automation", href: "/services/business-automation/" },
+      { label: "Cloud & Infrastructure", href: "/services/cloud-infrastructure/" },
+      { label: "Digital Products", href: "/services/digital-products/" },
+    ],
+  },
+  {
+    label: "How we work",
+    items: [
+      { label: "Our approach", href: "/solutions/" },
+      { label: "Solutions", href: "/solutions/" },
+      { label: "Our work", href: "/work/" },
+      { label: "Careers", href: "/careers/" },
+    ],
+  },
+  {
+    label: "Resources",
+    items: [
+      { label: "Blog", href: "/blog/" },
+      { label: "FAQs", href: "/faqs/" },
+      { label: "Our team", href: "/our-team/" },
+    ],
+  },
 ];
 
-function isActivePath(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(href);
+function isCurrent(pathname: string, href: string) {
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+  const normalizedHref = href.replace(/\/+$/, "") || "/";
+  return normalizedPath === normalizedHref ||
+    (normalizedHref !== "/" && normalizedPath.startsWith(`${normalizedHref}/`));
 }
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setMenuOpen(false);
+    setOpenGroup(null);
+    setMobileOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    if (!menuOpen) return;
-
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setMenuOpen(false);
+    function onPointerDown(event: PointerEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenGroup(null);
+      }
     }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpenGroup(null);
+        setMobileOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
-  }, [menuOpen]);
+  }, []);
 
   return (
-    <header className="site-header">
-      <div className="container-site site-header__inner">
-        <SiteLogo priority />
+    <header className="kr-header">
+      <nav className="kr-header__inner" aria-label="Main navigation" ref={navRef}>
+        <Link className="kr-brand" href="/" aria-label="Kurarin Solutions home">
+          <span className="kr-brand__mark" aria-hidden="true">
+            <img src="/images/kurarin-icon.png" alt="" width={34} height={34} />
+          </span>
+          <span className="kr-brand__name">Kurarin<span> Solutions</span></span>
+        </Link>
 
-        <nav className="site-header__desktop-nav" aria-label="Main navigation">
-          {navigation.map((item) => {
-            const active = isActivePath(pathname, item.href);
+        <div className="kr-nav__desktop">
+          {groups.map((group) => {
+            const active = group.items.some((item) => isCurrent(pathname, item.href));
+            const expanded = openGroup === group.label;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={`site-header__nav-link${active ? " is-active" : ""}`}
-              >
-                {item.label}
-              </Link>
+              <div className={`kr-nav-group${expanded ? " is-open" : ""}`} key={group.label}>
+                <button
+                  className={`kr-nav-trigger${active ? " is-active" : ""}`}
+                  type="button"
+                  aria-expanded={expanded}
+                  onClick={() => setOpenGroup(expanded ? null : group.label)}
+                >
+                  {group.label}
+                  <svg viewBox="0 0 16 16" aria-hidden="true" className="kr-chevron">
+                    <path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                {expanded && (
+                  <div className="kr-dropdown">
+                    {group.items.map((item) => (
+                      <Link
+                        className={`kr-dropdown__link${isCurrent(pathname, item.href) ? " is-current" : ""}`}
+                        href={item.href}
+                        key={`${group.label}-${item.label}`}
+                        onClick={() => setOpenGroup(null)}
+                      >
+                        <span>{item.label}</span>
+                        <span className="kr-dropdown__arrow" aria-hidden="true">↗</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             );
           })}
-        </nav>
+          <Link className={`kr-nav-link${isCurrent(pathname, "/about/") ? " is-active" : ""}`} href="/about/">About</Link>
+        </div>
 
-        <Link className="button button--primary site-header__desktop-cta" href="/contact/">
-          Let&apos;s talk <span aria-hidden="true">↗</span>
+        <Link className="kr-header__cta" href="/contact/">
+          Talk to us <span aria-hidden="true">→</span>
         </Link>
 
         <button
+          className={`kr-mobile-toggle${mobileOpen ? " is-open" : ""}`}
           type="button"
-          className="site-header__menu-toggle"
-          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-navigation"
-          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
+          aria-controls="kr-mobile-menu"
+          onClick={() => setMobileOpen((value) => !value)}
         >
-          <span className={`menu-icon${menuOpen ? " is-open" : ""}`} aria-hidden="true">
-            <span />
-            <span />
-          </span>
+          <span /><span />
         </button>
-      </div>
 
-      <div className={`site-header__mobile-panel${menuOpen ? " is-open" : ""}`}>
-        <nav id="mobile-navigation" className="site-header__mobile-nav" aria-label="Mobile navigation">
-          {navigation.map((item) => {
-            const active = isActivePath(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={`site-header__mobile-link${active ? " is-active" : ""}`}
-              >
-                {item.label}
-                <span aria-hidden="true">↗</span>
-              </Link>
-            );
-          })}
-          <Link className="button button--primary site-header__mobile-cta" href="/contact/">
-            Start a conversation <span aria-hidden="true">↗</span>
-          </Link>
-        </nav>
-      </div>
-      {menuOpen ? (
-        <button
-          type="button"
-          aria-label="Close navigation menu overlay"
-          className="site-header__backdrop"
-          onClick={() => setMenuOpen(false)}
-        />
-      ) : null}
+        {mobileOpen && (
+          <div className="kr-mobile-menu" id="kr-mobile-menu">
+            {groups.map((group) => (
+              <div className="kr-mobile-group" key={`mobile-${group.label}`}>
+                <p>{group.label}</p>
+                {group.items.map((item) => (
+                  <Link href={item.href} key={`mobile-${item.label}`} onClick={() => setMobileOpen(false)}>
+                    {item.label}<span aria-hidden="true">↗</span>
+                  </Link>
+                ))}
+              </div>
+            ))}
+            <Link className="kr-mobile-menu__single" href="/about/" onClick={() => setMobileOpen(false)}>About</Link>
+            <Link className="kr-mobile-menu__single" href="/our-team/" onClick={() => setMobileOpen(false)}>Our team</Link>
+            <Link className="kr-mobile-menu__cta" href="/contact/" onClick={() => setMobileOpen(false)}>Talk to us <span aria-hidden="true">→</span></Link>
+          </div>
+        )}
+      </nav>
     </header>
   );
 }

@@ -39,12 +39,15 @@ function isCmsArticle(post: { status: string; content?: string }): boolean {
 }
 
 function renderPlainText(content: string) {
-  // CMS content is intentionally treated as plain text. Do not render stored HTML.
-  return content.split(/\n{2,}/).map((paragraph, index) => (
-    <p key={index}>{paragraph.split("\n").map((line, lineIndex) => (
-      <span key={lineIndex}>{line}{lineIndex < paragraph.split("\n").length - 1 ? <br /> : null}</span>
-    ))}</p>
-  ));
+  // CMS and curated article content are intentionally rendered as plain text.
+  // Never inject stored HTML into the public article page.
+  return content.split(/\n{2,}/).filter(Boolean).map((paragraph, index) => {
+    if (paragraph.startsWith("## ")) return <h2 key={index}>{paragraph.slice(3)}</h2>;
+    const lines = paragraph.split("\n");
+    return <p key={index}>{lines.map((line, lineIndex) => (
+      <span key={lineIndex}>{line}{lineIndex < lines.length - 1 ? <br /> : null}</span>
+    ))}</p>;
+  });
 }
 
 export default async function BlogArticlePage({ params }: BlogArticleProps) {

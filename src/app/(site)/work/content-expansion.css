@@ -1,0 +1,54 @@
+/* Keep both route copies identical; merge into a shared stylesheet when integrating. */
+.ke-page {
+  --ke-ink: #111111;
+  --ke-muted: #646464;
+  --ke-line: #e5e5e5;
+  --ke-accent: #ff1744;
+  color: var(--ke-ink);
+  margin: 0 auto;
+  max-width: 1440px;
+}
+.ke-hero { padding: clamp(3.5rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3.5rem) 3.25rem; border-bottom: 1px solid var(--ke-line); }
+.ke-eyebrow { font-size: .75rem; line-height: 1.4; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ke-muted); margin: 0 0 1.1rem; }
+.ke-hero h1 { font-size: clamp(2.6rem, 5.1vw, 4.8rem); line-height: .99; letter-spacing: -.055em; font-weight: 750; max-width: 980px; margin: 0; }
+.ke-hero h1 span { color: var(--ke-accent); }
+.ke-lead { max-width: 700px; color: #454545; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.65; margin: 1.5rem 0 0; }
+.ke-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.7rem; }
+.ke-button { display: inline-flex; align-items: center; justify-content: center; gap: .7rem; min-height: 46px; padding: .75rem 1.1rem; border: 1px solid var(--ke-line); border-radius: 4px; text-decoration: none; font-size: .9rem; font-weight: 650; transition: transform .18s ease, background .18s ease; }
+.ke-button:hover { transform: translateY(-1px); }
+.ke-button--dark { background: #080808; color: #fff; border-color: #080808; }
+.ke-button--light { background: #fff; color: #111; }
+.ke-note { max-width: 780px; margin: 1.2rem 0 0; color: #777; font-size: .82rem; line-height: 1.6; }
+.ke-section { padding: clamp(3rem, 6vw, 5.5rem) clamp(1.25rem, 4vw, 3.5rem); }
+.ke-section--tint { background: #f7f7f5; }
+.ke-section h2, .ke-cta h2 { font-size: clamp(1.9rem, 3.2vw, 3.1rem); line-height: 1.08; letter-spacing: -.04em; max-width: 760px; margin: 0 0 1.2rem; }
+.ke-section-heading { max-width: 800px; margin-bottom: 2rem; }
+.ke-copy { color: var(--ke-muted); font-size: 1rem; line-height: 1.7; max-width: 760px; }
+.ke-principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.ke-principle { border-top: 1px solid #cfcfcf; padding-top: 1rem; }
+.ke-number { display: block; color: var(--ke-accent); font-size: .78rem; font-weight: 750; margin-bottom: 1.5rem; }
+.ke-principle h3 { font-size: 1.1rem; letter-spacing: -.02em; margin: 0 0 .6rem; }
+.ke-principle p { color: var(--ke-muted); font-size: .94rem; line-height: 1.65; margin: 0; }
+.ke-tags { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1.5rem 0; }
+.ke-tag { border: 1px solid #dcdcd8; border-radius: 999px; padding: .55rem .8rem; background: #fff; font-size: .85rem; }
+.ke-project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+.ke-project { border: 1px solid var(--ke-line); background: #fff; border-radius: 6px; overflow: hidden; }
+.ke-project__visual { height: 170px; display: flex; align-items: flex-start; justify-content: space-between; padding: 1rem; background: radial-gradient(circle at 80% 20%, #ffe3e8 0, transparent 34%), linear-gradient(135deg, #f5f5f3, #e9e9e6); color: #777; font-size: .8rem; }
+.ke-project__mark { font-size: 2rem; line-height: 1; font-weight: 800; letter-spacing: -.08em; color: #111; }
+.ke-project__body { padding: 1.25rem; }
+.ke-project__meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; color: var(--ke-muted); font-size: .75rem; }
+.ke-status { border: 1px solid var(--ke-line); border-radius: 999px; padding: .25rem .5rem; white-space: nowrap; }
+.ke-project h3 { font-size: 1.35rem; letter-spacing: -.03em; margin: 1rem 0 .6rem; }
+.ke-project p { font-size: .94rem; line-height: 1.65; color: var(--ke-muted); margin: 0 0 1rem; }
+.ke-text-link { color: #111; text-decoration-thickness: 1px; text-underline-offset: 4px; font-size: .88rem; font-weight: 650; }
+.ke-cta { margin: clamp(1.25rem, 4vw, 3.5rem); padding: clamp(2rem, 5vw, 4rem); background: #f6f6f4; border: 1px solid var(--ke-line); border-radius: 6px; }
+.ke-cta p:not(.ke-eyebrow) { color: var(--ke-muted); max-width: 680px; line-height: 1.7; margin-bottom: 1.4rem; }
+@media (max-width: 700px) {
+  .ke-principles, .ke-project-grid { grid-template-columns: 1fr; }
+  .ke-hero { padding-top: 3rem; }
+  .ke-project__visual { height: 140px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ke-button { transition: none; }
+  .ke-button:hover { transform: none; }
+}

@@ -32,7 +32,9 @@ export async function publishPostAction(formData: FormData) {
   const id = String(formData.get('id') ?? '');
   if (!/^[0-9a-f-]{36}$/i.test(id)) redirect('/admin?error=invalid-id');
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from('posts').update({ status: 'published', published_at: new Date().toISOString() }).eq('id', id);
+  const { data: currentPost, error: lookupError } = await supabase.from('posts').select('published_at').eq('id', id).maybeSingle();
+  if (lookupError || !currentPost) redirect('/admin?error=publish-failed');
+  const { error } = await supabase.from('posts').update({ status: 'published', published_at: currentPost.published_at || new Date().toISOString() }).eq('id', id);
   if (error) redirect('/admin?error=publish-failed');
   revalidatePath('/admin');
   revalidatePath('/blog');

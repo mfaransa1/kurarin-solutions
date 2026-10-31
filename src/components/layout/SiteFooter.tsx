@@ -1,62 +1,96 @@
+'use client';
 import Link from "next/link";
-import { SiteLogo } from "@/components/layout/SiteLogo";
-import { Container } from "@/components/layout/Container";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
-const footerLinks = [
-  { label: "About us", href: "/about/" },
-  { label: "Our services", href: "/services/" },
-  { label: "Our team", href: "/our-team/" },
-  { label: "Insights", href: "/blog/" },
-  { label: "FAQs", href: "/faqs/" },
-  { label: "Contact", href: "/contact/" },
+const footerGroups = [
+  {
+    title: "Services",
+    links: [
+      { label: "Software Development", href: "/services/software-development/" },
+      { label: "Business Automation", href: "/services/business-automation/" },
+      { label: "Cloud & Infrastructure", href: "/services/cloud-infrastructure/" },
+      { label: "Digital Products", href: "/services/digital-products/" },
+    ],
+  },
+  {
+    title: "How we work",
+    links: [
+      { label: "Our approach", href: "/about/#our-approach" },
+      { label: "Our work", href: "/work/" },
+      { label: "Solutions", href: "/solutions/" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Blog", href: "/blog/" },
+      { label: "FAQs", href: "/faqs/" },
+      { label: "Careers", href: "/careers/" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/about/" },
+      { label: "Our team", href: "/our-team/" },
+      { label: "Contact", href: "/contact/" },
+    ],
+  },
 ];
 
 export function SiteFooter() {
-  const year = new Date().getFullYear();
+  const [year, setYear] = useState(2026);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   return (
-    <footer className="site-footer">
-      <Container>
-        <div className="site-footer__main">
-          <div className="site-footer__brand">
-            <SiteLogo showTagline />
-            <p className="site-footer__statement">
-              Practical technology, thoughtful design, and dependable digital solutions
-              for businesses ready to move forward.
-            </p>
-            <Link className="site-footer__email" href="/contact/">
-              Tell us what you&apos;re building <span aria-hidden="true">↗</span>
+    <footer className="site-footer site-footer--editorial">
+      <div className="site-footer__editorial-inner">
+        <div className="site-footer__editorial-main">
+          <div className="site-footer__brand-column">
+            <Link href="/" className="site-footer__brand" aria-label="Kurarin Solutions home">
+              <Image
+                src="/images/kurarin-icon.png"
+                alt=""
+                width={30}
+                height={30}
+                className="site-footer__brand-icon"
+              />
+              <span>Kurarin Solutions</span>
             </Link>
+            <p className="site-footer__company-line">Software · Systems · Automation · Cloud</p>
+            <p className="site-footer__brand-copy">
+              We build custom software, business systems and digital experiences that help
+              organisations work better and grow with confidence.
+            </p>
           </div>
 
-          <div className="site-footer__links-wrap">
-            <div>
-              <h2 className="site-footer__heading">Explore</h2>
-              <ul className="site-footer__links">
-                {footerLinks.map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href}>{item.label}</Link>
+          {footerGroups.map((group) => (
+            <nav key={group.title} className="site-footer__group" aria-label={group.title}>
+              <h2>{group.title}</h2>
+              <ul>
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href}>{link.label}</Link>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
+          ))}
+        </div>
 
-            <div>
-              <h2 className="site-footer__heading">Get in touch</h2>
-              <ul className="site-footer__links">
-                <li><Link href="/contact/">Contact our team</Link></li>
-                <li><a href="mailto:info@kurarinsolutions.co.ke">Email us</a></li>
-                <li><span>Nairobi, Kenya</span></li>
-              </ul>
-            </div>
+        <div className="site-footer__editorial-bottom">
+          <div className="site-footer__bottom-links">
+            <Link href="/contact/">Contact us</Link>
+            <Link href="/privacy-policy/">Privacy</Link>
+            <Link href="/terms/">Terms</Link>
           </div>
-        </div>
-
-        <div className="site-footer__bottom">
           <p>© {year} Kurarin Solutions. All rights reserved.</p>
-          <p className="site-footer__tagline">Storing Knowledge, Delivering Solutions.</p>
         </div>
-      </Container>
+      </div>
     </footer>
   );
 }

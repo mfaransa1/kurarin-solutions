@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 import {
   blogPosts as legacyPosts,
   type BlogPost,
@@ -61,12 +61,22 @@ function normalizePost(row: SupabasePost): BlogPost & { id: string; content: str
  * each original WordPress article has been migrated and editorially reviewed.
  */
 export async function getPublicBlogPosts(): Promise<BlogPost[]> {
+  "use cache";
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return legacyPosts;
 
   try {
-    const supabase = await createSupabaseServerClient();
+    // Public blog reads intentionally use the anonymous key without request cookies.
+    // This keeps public content independent of the authenticated CMS session and
+    // makes it safe to evaluate during static generation. Supabase RLS must allow
+    // anonymous SELECT access to published posts only.
+    const supabase = createServerClient(url, key, {
+      cookies: {
+        getAll: () => [],
+        setAll: () => {},
+      },
+    });
     const { data, error } = await supabase
       .from("posts")
       .select(`
